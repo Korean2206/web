@@ -1,0 +1,74 @@
+package com.poly.Servlet;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.poly.DAO.FavoriteDAO;
+import com.poly.DAO.VideoDAO;
+import com.poly.entity.Favorite;
+import com.poly.entity.User;
+import com.poly.entity.Video;
+import com.poly.utils.Auth;
+
+/**
+ * Servlet implementation class FavoriteServlet
+ */
+@WebServlet("/favorite/*")
+public class FavoriteServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String uri = request.getRequestURI();
+		 Auth.user = (User) request.getSession().getAttribute("user");
+		if(Auth.user == null) {
+			System.out.println("null");
+			request.getRequestDispatcher("/views/khachHang/Home.jsp").forward(request, response);
+			
+		}
+		else {
+		if(uri.contains("favorite")){
+			 String id = uri.substring(uri.lastIndexOf("/")+1);
+			 System.out.println(id);
+			 FavoriteDAO daof = new FavoriteDAO();
+			 VideoDAO dao = new VideoDAO();
+			 Video video = dao.selectById(id);
+			 Favorite f;
+			 int i = -1;
+			 for(Favorite ff : daof.selectAll()) {
+				 if(ff.getUser().equals(Auth.user) && ff.getVideo().equals(video) ) {
+					 i++;
+				 } 
+			 }
+			 if(i == -1) {
+				 
+			 f = new Favorite(Auth.user,video,new Date());
+			 daof.insert(f);
+			 }
+			 List<Favorite> fs = daof.selectAll();
+			 List<Video> list = new ArrayList<Video>();
+			 for(Favorite ff : fs) {
+				 if(ff.getUser().getId().equals(Auth.user.getId())) {
+				list.add( ff.getVideo());
+				 }
+			 }
+			 request.setAttribute("videos", list);
+		}
+		request.getRequestDispatcher("/views/khachHang/Favorite.jsp").forward(request, response);
+		}
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
+	}
+
+}

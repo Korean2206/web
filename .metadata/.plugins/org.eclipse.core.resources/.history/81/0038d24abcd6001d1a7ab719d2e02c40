@@ -1,0 +1,229 @@
+package com.poly.Servlet;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.poly.DAO.UserDAO;
+import com.poly.entity.User;
+import com.poly.utils.Auth;
+import com.poly.utils.CookieUtil;
+import com.poly.utils.MailUtil;
+
+/**
+ * Servlet implementation class AccountServlet
+ */
+@WebServlet({ "/account/login", "/account/change_password", "/account/edit_profile", "/account/registration",
+		"/account/sign-out", "/account/forgot_password" })
+public class AccountServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	@Override
+	protected void service(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String uri = request.getRequestURI();
+		System.out.println(uri);
+		if (uri.contains("login")) {
+			this.doLogin(request, response);
+		} else if (uri.contains("registration")) {
+			this.doRegistration(request, response);
+
+		} else if (uri.contains("sign-out")) {
+			this.doSignOut(request, response);
+
+		} else if (uri.contains("forgot_password")) {
+			this.doForgot(request, response);
+
+		} else if (uri.contains("change_password")) {
+			this.doChange(request, response);
+
+		} else if (uri.contains("edit_profile")) {
+			this.doEdit(request, response);
+		}
+	}
+
+	private void doLogin(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String method = req.getMethod();
+		if (method.equalsIgnoreCase("POST")) {
+			String username = req.getParameter("username");
+			String password = req.getParameter("password");
+			String remember = req.getParameter("remember");
+			UserDAO dao = new UserDAO();
+			String message = "";
+			try {
+				User user = dao.selectById(username);
+				if (password.equals(user.getPassword())) {
+					Auth.user = user;
+					if(remember != null) {
+						System.out.println("remember: " +remember);
+					int hours = (remember == null)? 0 : 30*24;
+					System.out.println("hour: " + hours);
+					CookieUtil.add("username", username, hours, resp);
+					CookieUtil.add("password", password, hours, resp);
+					}
+					if(Auth.isAdmin()) {
+						req.getSession().setAttribute("user", user);
+						
+						req.getRequestDispatcher("/views/admin/ManageVideo.jsp").forward(req, resp);
+					}
+					if(!Auth.isAdmin()) {
+						System.out.println("login");
+						req.getSession().setAttribute("user", user);
+						req.getRequestDispatcher("/views/khachHang/Favorite.jsp").forward(req, resp);
+
+					}
+
+				} else {
+					message = "Bạn nhập sai mật khẩu";
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				message = "Tài khoản không tồn tại";
+			}
+			req.setAttribute("message", message);
+		}else {
+			
+		String cUsername = CookieUtil.get("username", req);
+		String cPassword = CookieUtil.get("password", req);
+		req.setAttribute("username", cUsername);
+		req.setAttribute("password", cPassword);
+		req.getRequestDispatcher("/views/khachHang/Login.jsp").forward(req, resp);
+		}
+	}
+
+	private void doRegistration(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String method = req.getMethod();
+		String message ="";
+		if(method.equalsIgnoreCase("POST")) {
+			try {
+				String username = req.getParameter("username");
+				String password = req.getParameter("password");
+				String fullname = req.getParameter("fullname");
+				String email = req.getParameter("email");
+				User user = new User(username,password,email,fullname);
+				UserDAO dao = new UserDAO();
+				boolean emty = (dao.selectById(username) == null)?true:false;
+				if(emty) {
+				dao.insert(user);
+				message="Đăng ký tài khoản thành công!";
+				}else {
+					message="Tài khoản đã tồn tại";
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				message="Đăng ký tài khoản thất bại";
+			}
+			
+
+		}
+		req.setAttribute("message", message);
+		req.getRequestDispatcher("/views/khachHang/Registration.jsp").forward(req, resp);
+
+	}
+
+	private void doSignOut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			
+
+		req.getRequestDispatcher("/views/khachHang/Home.jsp").forward(req, resp);
+
+	}
+
+	private void doForgot(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String method= req.getMethod();
+		String message = "";
+		if(method.equalsIgnoreCase("POST")) {
+			try {
+				String username= req.getParameter("username");
+				String email = req.getParameter("email");
+				UserDAO dao = new UserDAO();
+				User user = dao.selectById(username);
+				if(user.getEmail().equals(email)) {
+					int random = MailUtil.random();
+					MailUtil.sendEmail(email,random);
+					user.setPassword(String.valueOf(random));
+					dao.update(user);
+					message="Đã gửi mật khẩu mới thành công";
+				}else {
+					message="Bạn đã nhập sai email!";
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				message="Bạn đã nhập sai user name";
+			}
+			
+		}
+		req.setAttribute("message", message);
+		req.getRequestDispatcher("/views/khachHang/Forgot.jsp").forward(req, resp);
+
+	}
+
+	private void doChange(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String method= req.getMethod();
+		String message = "";
+		if(method.equalsIgnoreCase("POST")) {
+			String username = req.getParameter("username");
+			String currentPass = req.getParameter("currentPass");
+			String newPass = req.getParameter("newPass");
+			String confirmPass = req.getParameter("confirmPass");
+			try {
+				UserDAO dao = new UserDAO();
+				User user = dao.selectById(username);
+				if(currentPass.equals(user.getPassword())) {
+					if(newPass.equals(confirmPass)) {
+						user.setPassword(confirmPass);
+						dao.update(user);
+						message="Bạn đã đổi password thành công";
+					}else {
+						message="Xác nhận mật khẩu không khớp";
+					}
+				}else {
+					message="Bạn nhập sai password";
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				message="Bạn nhập sai username";
+			}
+		}
+		req.setAttribute("message", message);
+		req.getRequestDispatcher("/views/khachHang/ChangePass.jsp").forward(req, resp);
+
+	}
+
+	private void doEdit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String method= req.getMethod();
+		String message = "";
+		if(method.equalsIgnoreCase("POST")) {
+			String username = req.getParameter("username");
+			String password = req.getParameter("password");
+			String fullname = req.getParameter("fullname");
+			String email = req.getParameter("email");
+			try {
+				UserDAO dao = new UserDAO();
+				User user = dao.selectById(username);
+				if(password.equals(user.getPassword())) {
+					user.setEmail(email);
+					user.setFullname(fullname);
+					dao.update(user);
+					message="Cập nhật thông tin thành công";
+
+				}else {
+					message="Bạn nhập sai password";
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				message="Bạn nhập sai username";
+			}
+		}
+		req.setAttribute("message", message);
+		req.getRequestDispatcher("/views/khachHang/EditProfile.jsp").forward(req, resp);
+
+	}
+
+}

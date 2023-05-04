@@ -1,0 +1,74 @@
+package com.poly.DAO;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+
+import com.poly.entity.Favorite;
+import com.poly.entity.User;
+import com.poly.entity.Video;
+import com.poly.utils.JpaUtil;
+
+public class UserDAO extends onlineDAO<User,String> {
+	private EntityManager em = JpaUtil.getEntityManager();
+
+	@Override
+	public void insert(User entity) {
+		// TODO Auto-generated method stub
+		try {
+			em.getTransaction().begin();
+			em.persist(entity);
+			em.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			em.getTransaction().rollback();
+			}
+		
+	}
+
+	@Override
+	public void update(User entity) {
+		// TODO Auto-generated method stub
+		try {
+			em.getTransaction().begin();
+			em.merge(entity);
+			em.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			em.getTransaction().rollback();
+			}
+		
+	}
+
+	@Override
+	public void delete(String key) {
+		// TODO Auto-generated method stub
+		try {
+			em.getTransaction().begin();
+			User entity = em.find(User.class, key);
+			em.remove(entity);
+			em.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			em.getTransaction().rollback();
+			}
+		
+	}
+
+	@Override
+	public List<User> selectAll() {
+		// TODO Auto-generated method stub
+		String jpql = "SELECT DISTINCT o FROM User o";
+		TypedQuery<User> query = em.createQuery(jpql,User.class);
+		return query.getResultList();
+	}
+
+	@Override
+	public User selectById(String key) {
+		// TODO Auto-generated method stub
+		User entity = em.find(User.class, key);
+		return entity;
+	}
+
+}

@@ -1,0 +1,56 @@
+package com.poly.Servlet;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.poly.DAO.ShareDAO;
+import com.poly.DAO.VideoDAO;
+import com.poly.entity.Share;
+import com.poly.entity.User;
+import com.poly.entity.Video;
+import com.poly.utils.Auth;
+import com.poly.utils.MailUtil;
+
+/**
+ * Servlet implementation class SendEmailServlet
+ */
+@WebServlet("/sendemail/*")
+public class SendEmailServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+   
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.getRequestDispatcher("/views/khachHang/SendEmail.jsp").forward(request, response);
+	
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String uri = request.getRequestURI();
+		String message = "";
+		Auth.user = (User) request.getSession().getAttribute("user");
+
+		if(Auth.user != null) {
+			
+		VideoDAO daov = new VideoDAO();
+		String id = uri.substring(uri.lastIndexOf("/") + 1);
+		Video v = daov.selectById(id);
+		String to = request.getParameter("email");
+		String name = Auth.user.getFullname();
+		String link = "https://www.youtube.com/watch?v="+id;
+		MailUtil.sendEmail(name,to, link);
+		ShareDAO dao = new ShareDAO();
+		Share entity = new Share(Auth.user,v);
+		dao.insert(entity);
+		}
+		
+		request.setAttribute("message", message);
+		request.getRequestDispatcher("/views/khachHang/SendEmail.jsp").forward(request, response);
+
+	}
+
+}

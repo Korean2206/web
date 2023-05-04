@@ -1,0 +1,86 @@
+@charset "UTF-8";
+
+.app_container {
+	margin:0 20%;
+	margin-top: 100px;
+}
+.video{
+	border: solid 1px red;
+}
+.row {
+	padding: 16px;
+}
+.video_background {
+	background-color: #999;
+	border:solid 1px red;
+	height: 100%;
+}
+.video_background  > label {
+	margin-left: 8%;
+}
+.video_background  > label > img{
+    border: solid 1px red;
+    height: 100px;
+    width: 218px;
+    margin: 12%;
+    cursor: pointer;
+    }
+    
+.col {
+	display: inline-block;
+	width: 45%;
+	margin: 16px;
+	height: 200px;
+}
+.col > input {
+	border: solid 1px red;
+	width: 90%;
+	margin: 5px 0;
+	
+}
+.row >textarea {
+	margin-top: 10px;
+	width: 100%;
+	border: solid 1px red;
+	height: 70px;
+}
+.video_footer  {
+	background-color: #f6f6f6;
+	border: solid 1px red;
+	text-align: end;
+	padding: 16px;
+	
+}
+.video_footer > button  {
+	color: red;
+	background-color: #999;
+	border: none;
+	border-radius: 5px;
+	font-size: 16px;
+	padding: 5px 10px;
+	cursor: pointer;
+}
+.app_tab__button > button{
+	    border: solid 1px red;
+    background-color: #fff;
+    padding: 10px;
+    margin-right: -4px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+.list_footer {
+	background-color: #f6f6f6;
+	border: solid 1px red;
+	text-align: end;
+	padding: 12px;
+}
+.list_footer > button {
+	color: red;
+	background-color: #999;
+	border: none;
+	border-radius: 5px;
+	font-size: 16px;
+	padding: 5px 10px;
+}

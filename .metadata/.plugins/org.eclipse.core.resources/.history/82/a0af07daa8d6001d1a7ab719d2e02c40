@@ -1,0 +1,66 @@
+package com.poly.Servlet;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.poly.DAO.UserDAO;
+import com.poly.DAO.VideoDAO;
+import com.poly.entity.User;
+import com.poly.entity.Video;
+
+/**
+ * Servlet implementation class VideoManagerServlet
+ */
+@WebServlet({"/user/index","/user/update","/user/delete","/user/edit/*"})
+public class UserManageServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	@Override
+		protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			// TODO Auto-generated method stub
+			String uri = req.getRequestURI();
+			if(uri.contains("index")) {
+				UserDAO dao = new UserDAO();
+				List<User> list = dao.selectAll();
+				req.setAttribute("count", list.size());
+				req.setAttribute("users", list);
+				req.getRequestDispatcher("/views/admin/ManageUser.jsp").forward(req, resp);
+			} else if (uri.contains("update")) {
+				doUpdate(req, resp);
+			} else if (uri.contains("delete")) {
+				doDelete(req, resp);
+			} else if (uri.contains("edit")) {
+				doEdit(req, resp);
+			}
+		}
+
+
+	protected void doUpdate(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+
+	}
+
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+	}
+
+	protected void doEdit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String method = req.getMethod();
+		System.out.println(method);
+		String uri = req.getRequestURI();
+		System.out.println(uri	);
+		String id = uri.substring(uri.indexOf("/")+1);
+		UserDAO dao = new UserDAO();
+		User user = dao.selectById(id);
+		System.out.println(user);
+		req.setAttribute("user", user);
+		req.getRequestDispatcher("/views/admin/ManageUser.jsp").forward(req, resp);
+
+	}
+}

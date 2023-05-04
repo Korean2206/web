@@ -1,0 +1,56 @@
+package com.poly.Servlet;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.poly.DAO.ShareDAO;
+import com.poly.DAO.UserDAO;
+import com.poly.entity.Report;
+import com.poly.entity.ReportUser;
+import com.poly.entity.Share;
+import com.poly.entity.User;
+import com.poly.utils.JpaUtil;
+
+/**
+ * Servlet implementation class ReportServlet
+ */
+@WebServlet("/favoritevideo")
+public class ReportServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private EntityManager em = JpaUtil.getEntityManager();
+
+    
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+			UserDAO dao = new UserDAO();
+			ShareDAO daos = new ShareDAO();
+			String fUser = request.getParameter("fUser");
+			String jpql = "SELECT NEW Report(o.video.title,count(o),max(o.likeDate),min(o.likeDate)) FROM Favorite o GROUP BY o.video.title";
+			TypedQuery<Report> query = em.createQuery(jpql,Report.class);
+			List<Report> listr = query.getResultList();
+			Query nativeQuery = em.createNativeQuery("select u.id,u.fullname,u.email,f.likeDate from Users join Favorites f on f.userId = u.ID where f.videoId in (select id from Videos where title = ?1)");
+			nativeQuery.setParameter(1, fUser);
+	        List<Object[]> listu =  nativeQuery.getResultList();
+			request.setAttribute("videos", listr);
+			
+			request.setAttribute("users", listu);
+
+			request.getRequestDispatcher("/views/admin/Report.jsp").forward(request, response);
+			
+		
+	}
+
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+	}
+
+}

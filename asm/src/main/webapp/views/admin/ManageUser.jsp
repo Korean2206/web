@@ -1,0 +1,90 @@
+	<%@ page language="java" contentType="text/html; charset=UTF-8"
+	isELIgnored="false" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
+
+<!DOCTYPE html>
+<html>
+<head>
+<base href="${pageContext.request.contextPath}" />
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/asm/views/ManageUser.css">
+</head>
+<body>
+<c:url var="url" value="/user"/>
+	<%@ include file="/views/admin/Nav.jsp" %>
+	<div class="app_container">
+		<div class="app_tab__button">
+			<button style="background-color:#fff;" class="edit" onclick="tab('edit')">USER EDITON</button>
+			<button style="background-color:#fff;" class="list" onclick="tab('list')">USER LIST</button>
+		</div>
+
+		<form id="edit" class="user"  action="${url}/index" method="post">
+			<div class="user_body">
+				<div class="col">
+					Username? <br>
+					<input type="text" name="username" value="${user.id}" ${disabled }> <br>
+					Fullname? <br>
+					<input type="text" name="fullname" value="${user.fullname}"> <br>
+				</div>
+				<div class="col">
+					Password? <br>
+					<input type="text" name="password" value="${user.password}"> <br>
+					Email Address? <br>
+					<input type="email" name="email" value="${user.email}"> <br>
+				</div>
+			</div>
+			<div class="user_footer">
+			<span style="color: red; margin-right: 16px;">${message }</span>
+				<button formaction="${url}/update">Update</button>
+				<button formaction="${url}/delete">Delete</button>
+			</div>
+		</form>
+
+		<div id="list" class="user" style="display: none">
+			<div class="list_body">
+				<table style="width: 100%">
+					<tr>
+						<th>User name</th>
+						<th>Password</th>
+						<th>Fullname</th>
+						<th>Email</th>
+						<th>Role</th>
+						<th></th>
+					
+					</tr>
+					<c:forEach var="item" items="${users }">
+					<tr>
+						<td>${item.id }</td>
+						<td>${item.password }</td>
+						<td>${item.fullname }</td>
+						<td>${item.email }</td>
+						<td>${item.admin?'Admin':'User'}</td>
+						<td><a href="${url}/edit/${item.id}">Edit</a></td>
+					</tr>
+					</c:forEach>
+					
+				</table>
+			</div>
+			<div class="list_footer">
+				<h5>${count} Users</h5>
+				<button>|<</button>
+				<button><<</button>
+				<button>>></button>
+				<button>>|</button>
+			</div>
+		</div>
+	</div>
+	<script>
+		function tab(name) {
+			var i;
+			var x = document.getElementsByClassName("user");
+			for (i = 0; i < x.length; i++) {
+				x[i].style.display = "none";
+			}
+			document.getElementById(name).style.display = "block";
+			document.getElementsByClassName(name).style.backgroundColor = "#999";
+		}
+	</script>
+</body>
+</html>

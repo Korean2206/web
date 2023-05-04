@@ -1,0 +1,102 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	isELIgnored="false" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/asm/views/ManageVideo.css">
+</head>
+<body>
+<c:url var="url" value="/video"/>
+
+		<%@ include file="/views/admin/Nav.jsp" %>
+	
+	<div class="app_container">
+		<div class="app_tab__button">
+			<button style="background-color:#fff;" class="edit" onclick="tab('edit')">VIDEO EDITON</button>
+			<button style="background-color:#fff;" class="list" onclick="tab('list')">VIDEO LIST</button>
+		</div>
+
+		<form id="edit" class="video" action="${url}/index" enctype='multipart/form-data' method="post">
+			<div class="video_body">
+				<div class="row">
+					<div class="col">
+						<div class="video_background" >
+							<input type="file" name="imgFile" value="test" id="actual-btn"  onchange="javascript:this.form.submit();" hidden/>
+							<label for="actual-btn" >
+							<img alt="" src="/asm/img/${img.name}">
+							</label>
+						</div>
+					</div>
+					<div class="col">
+						YOUTUBE ID? <br> <input type="text" name="videoID" value="${video.id }"> <br> VIDEO
+						TITLE? <br> <input type="text" name="title" value="${video.title}"> <br> VIEW COUNT?
+						<br> <input type="number"  disabled name="views" value="0"> <br>
+						<div class="check_active">
+							<input type="radio" name="status" value="true" ${video.active?'checked':''}> Active <input
+								type="radio" name="status" value="false" ${video.active?'':'checked'}> INACTIVE
+						</div>
+					</div>
+				</div>
+				<div class="row" style="margin-left: 16px;">
+					DESCRIPTION? <br>
+					<textarea name="description">${video.description }</textarea>
+					<br>
+				</div>
+			</div>
+			<div class="video_footer">
+			<span style="color:red;margin-right: 16px;">${message }</span>
+				<button form action="${url}/create">Create</button>
+				<button formaction="${url}/update">Update</button>
+				<button formaction="${url}/delete">Delete</button>
+				<button formaction="${url}/index">Reset</button>
+			</div>
+		</form>
+
+		<form id="list" class="video" style="display: none" action="${url}/index" method="post">
+			<div class="list_body">
+				<table style="width: 100%">
+					<tr>
+						<th>Youtube Id</th>
+						<th>Video Title</th>
+						<th>View Count</th>
+						<th>Status</th>
+						<th></th>
+					
+					</tr>
+					<c:forEach var="item" items="${videos}">
+					<tr>
+						<td>${item.id }U</td>
+						<td>${item.title }</td>
+						<td>${item.views }</td>
+						<td>${item.active }</td>
+						<td><a href="/asm/video/edit/${item.id }">Edit</a></td>
+					</tr>
+					</c:forEach>
+					
+				</table>
+			</div>
+			<div class="list_footer">
+				<button>|<</button>
+				<button><<</button>
+				<button>>></button>
+				<button>>|</button>
+			</div>
+		</div>
+	</form>
+	<script>
+		function tab(name) {
+			var i;
+			var x = document.getElementsByClassName("video");
+			for (i = 0; i < x.length; i++) {
+				x[i].style.display = "none";
+			}
+			document.getElementById(name).style.display = "block";
+			document.getElementsByClassName(name).style.backgroundColor = "#999";
+		}
+	</script>
+</body>
+</html>

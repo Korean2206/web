@@ -1,0 +1,28 @@
+@charset "UTF-8";
+
+.app_container {
+	margin:0 20%;
+	margin-top: 100px;
+}
+
+.app_tab__button > button{
+	    border: solid 1px red;
+    background-color: #fff;
+    padding: 10px;
+    margin-right: -4px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+.list_body {
+	border: solid 1px red;
+}
+.list_body > input {
+	border: solid 1px red;
+	font-size: 25px;
+    margin: 9px 0;
+}
+.list_body > span {
+	margin-left: 5px;
+}

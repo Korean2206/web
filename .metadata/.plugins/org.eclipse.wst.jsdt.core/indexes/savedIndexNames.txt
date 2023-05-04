@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+D:\HomeWork\java_4\ps21442_quocmxh_asm\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+2884054363.index
+471700928.index
+1549207317.index
+3734763969.index
+389629203.index
+3492886757.index

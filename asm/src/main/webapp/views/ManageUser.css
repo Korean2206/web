@@ -1,0 +1,73 @@
+@charset "UTF-8";@charset "UTF-8";
+
+.app_container {
+	margin:0 20%;
+	margin-top: 100px;
+}
+.user{
+	border: solid 1px red;
+}
+
+.user_body {
+	height: 140px;
+}
+
+.col {
+	display: inline-block;
+	width: 45%;
+	margin: 16px;
+	height: 200px;
+}
+.col > input {
+	border: solid 1px red;
+	width: 90%;
+	margin: 5px 0;
+	
+}
+
+.user_footer  {
+	background-color: #f6f6f6;
+	border: solid 1px red;
+	text-align: end;
+	padding: 16px;
+	
+}
+.user_footer > button  {
+	color: red;
+	background-color: #999;
+	border: none;
+	border-radius: 5px;
+	font-size: 16px;
+	padding: 5px 10px;
+}
+.app_tab__button > button{
+	    border: solid 1px red;
+    background-color: #fff;
+    padding: 10px;
+    margin-right: -4px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+.list_footer {
+	background-color: #f6f6f6;
+	border: solid 1px red;
+	text-align: end;
+	padding: 12px;
+}
+.list_footer > button {
+	color: red;
+	background-color: #999;
+	border: none;
+	border-radius: 5px;
+	font-size: 16px;
+	padding: 5px 10px;
+	display: inline-block;
+}
+.list_footer > h5 {
+	display: inline-block;
+	width: 80%;
+    text-align: left;
+    margin: 0
+}
